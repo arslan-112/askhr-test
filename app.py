@@ -12,6 +12,7 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
+# Leave Balance Route
 @app.route('/leave-balance/<employee_id>', methods=['GET'])
 def get_leave_balance(employee_id):
     cur = mysql.connection.cursor()
@@ -22,6 +23,19 @@ def get_leave_balance(employee_id):
         return jsonify(result)
     else:
         return jsonify({"error": "Employee not found"}), 404
+
+# Employee Info Route
+@app.route('/employee-info/<employee_id>', methods=['GET'])
+def get_employee_info(employee_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM info WHERE employee_id = %s", (employee_id,))
+    result = cur.fetchone()
+    cur.close()
+
+    if result:
+        return jsonify(result)
+    else:
+        return jsonify({"error": "Employee info not found"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
